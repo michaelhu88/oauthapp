@@ -1,14 +1,14 @@
-from flask import Flask, redirect, url_for, session
+from flask import Flask, redirect, url_for, session, request
 import uuid
 import requests
 from requests_oauthlib import OAuth2Session
 import os
 
 app = Flask(__name__)
-app.secret_key = 'Talent_Synergy'  # Change this to a random secret key
+app.secret_key = 'Talent_Synergy'  #a random secret key
 app.config['SESSION_TYPE'] = 'filesystem'
 
-# Replace these with your LinkedIn credentials
+# Replaced with LinkedIn Credentials
 client_id = '862y79fkc4j2e8'
 client_secret = 'Evk7TliZOCIK2umC'
 authorization_base_url = 'https://www.linkedin.com/oauth/v2/authorization'
