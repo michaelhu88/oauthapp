@@ -1,58 +1,37 @@
 from flask import Flask, redirect, url_for, session
-from flask_oauthlib.client import OAuth
+import uuid
+import requests
+from requests_oauthlib import OAuth2Session
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'random_secret_key'
-app.debug = True
-oauth = OAuth(app)
+app.secret_key = 'Talent_Synergy'  # Change this to a random secret key
+app.config['SESSION_TYPE'] = 'filesystem'
 
-linkedin = oauth.remote_app(
-    'linkedin',
-    consumer_key='YOUR_LINKEDIN_CLIENT_ID',
-    consumer_secret='YOUR_LINKEDIN_CLIENT_SECRET',
-    request_token_params={
-        'scope': 'r_liteprofile r_emailaddress',
-        'state': 'RandomString',
-    },
-    base_url='https://api.linkedin.com/v2/',
-    request_token_url=None,
-    access_token_method='POST',
-    access_token_url='https://www.linkedin.com/oauth/v2/accessToken',
-    authorize_url='https://www.linkedin.com/oauth/v2/authorization',
-)
+# Replace these with your LinkedIn credentials
+client_id = '862y79fkc4j2e8'
+client_secret = 'Evk7TliZOCIK2umC'
+authorization_base_url = 'https://www.linkedin.com/oauth/v2/authorization'
+token_url = 'https://www.linkedin.com/oauth/v2/accessToken'
+redirect_uri = 'http://127.0.0.1:5000/auth/linkedin/callback'
 
 @app.route('/')
 def index():
-    return 'Welcome! Please <a href="/login">login</a>.'
+    return 'Welcome to LinkedIn OAuth'
 
-@app.route('/login')
-def login():
-    return linkedin.authorize(callback=url_for('authorized', _external=True))
+@app.route('/auth/linkedin')
+def linkedin_auth():
+    linkedin = OAuth2Session(client_id, redirect_uri=redirect_uri)
+    authorization_url, state = linkedin.authorization_url(authorization_base_url)
+    session['oauth_state'] = state
+    return redirect(authorization_url)
 
-@app.route('/logout')
-def logout():
-    session.pop('linkedin_token')
-    return redirect(url_for('index'))
-
-@app.route('/login/authorized')
-def authorized():
-    response = linkedin.authorized_response()
-    
-    if response is None or response.get('error'):
-        return 'Access denied: reason={} error={}'.format(
-            response.get('error_reason'),
-            response.get('error_description')
-        )
-
-    session['linkedin_token'] = (response['access_token'], '')
-    me = linkedin.get('me')
-    
-    return 'Logged in as: ' + me.data['firstName']
-
-@linkedin.tokengetter
-def get_linkedin_oauth_token():
-    return session.get('linkedin_token')
+@app.route('/auth/linkedin/callback')
+def linkedin_callback():
+    linkedin = OAuth2Session(client_id, state=session['oauth_state'], redirect_uri=redirect_uri)
+    token = linkedin.fetch_token(token_url, client_secret=client_secret, authorization_response=request.url)
+    user_info = linkedin.get('https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))')
+    return f"Hello, {user_info.json()['firstName']['localized']['en_US']} {user_info.json()['lastName']['localized']['en_US']}"
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
