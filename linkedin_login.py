@@ -1,4 +1,5 @@
 import os
+import json
 from dotenv import load_dotenv
 from linkedin_api import Linkedin
 
@@ -17,11 +18,9 @@ def get_user_info(profile_url):
     # Get the user's profile information
     user_info = api.get_profile(vanity_name)
     
-    # Print the user's profile information
-    print("\n")
-    for key, value in user_info.items():
-        print(f"{key}: {value}")
-        print("\n")
+    # Convert the user's profile information to a nicely formatted JSON string
+    user_info_json = json.dumps(user_info, indent=4)
+    print(user_info_json)
 
 # Ask the end user for the profile URL
 profile_url = input("Enter the LinkedIn profile URL: ")
