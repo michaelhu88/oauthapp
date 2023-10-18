@@ -77,6 +77,7 @@ def compare():
     if not old_data:
         return jsonify({"error": "No saved data found for this username!"}), 404
     diffs = compare_data(old_data, new_data)
+    save_user_data(vanity_name, new_data)
     return jsonify(diffs)
 
 if __name__ == '__main__':
