@@ -29,28 +29,41 @@ def load_user_data(vanity_name):
 def compare_data(old_data, new_data):
     IGNORE_KEYS = {"expiresAt", "fileIdentifyingUrlPathSegment", "trackingId"}
 
+    # If both old and new data are lists
     if isinstance(old_data, list) and isinstance(new_data, list):
         differences = []
         for old_item, new_item in zip(old_data, new_data):
             item_diff = compare_data(old_item, new_item)
             if item_diff:
                 differences.append(item_diff)
-        return differences
+        # Handle case where lists are of different lengths
+        if len(old_data) > len(new_data):
+            differences.extend(old_data[len(new_data):])
+        elif len(new_data) > len(old_data):
+            differences.extend(new_data[len(old_data):])
+        return differences if differences else None
 
-    differences = {}
-    for key, value in new_data.items():
-        if key in IGNORE_KEYS:
-            continue
-        if key not in old_data:
-            differences[key] = value
-        else:
-            if isinstance(value, dict) or isinstance(value, list):
-                nested_diff = compare_data(old_data[key], value)
-                if nested_diff:  # Only add to differences if there's a nested difference
-                    differences[key] = nested_diff
-            elif old_data[key] != value:
-                differences[key] = value
-    return differences
+    # If both old and new data are dictionaries
+    elif isinstance(old_data, dict) and isinstance(new_data, dict):
+        differences = {}
+        all_keys = set(old_data.keys()) | set(new_data.keys())
+        for key in all_keys:
+            if key in IGNORE_KEYS:
+                continue
+            old_value = old_data.get(key)
+            new_value = new_data.get(key)
+            if old_value != new_value:
+                if isinstance(old_value, (dict, list)) and isinstance(new_value, (dict, list)):
+                    nested_diff = compare_data(old_value, new_value)
+                    if nested_diff:
+                        differences[key] = nested_diff
+                else:
+                    differences[key] = new_value
+        return differences if differences else None
+
+    # If old and new data are of different types or primitive values
+    else:
+        return None if old_data == new_data else new_data
 
 @app.route('/fetch', methods=['POST'])
 def fetch_data():
@@ -59,9 +72,7 @@ def fetch_data():
     user_info = api.get_profile(vanity_name)
     
     # Remove all occurrences of trackingId from the data
-    cleaned_data = remove_tracking_id(user_info)
-    
-    save_user_data(vanity_name, cleaned_data)
+    save_user_data(vanity_name, user_info)
     return jsonify({"message": "Data fetched and saved successfully!"})
 
 @app.route('/compare', methods=['POST'])
@@ -69,15 +80,11 @@ def compare():
     vanity_name = request.json.get('username')
     api = Linkedin(email, password)
     new_data = api.get_profile(vanity_name)
-        
-    pretty_json = json.dumps(new_data, indent=4)
-    print(pretty_json)
-    
     old_data = load_user_data(vanity_name)
+
     if not old_data:
         return jsonify({"error": "No saved data found for this username!"}), 404
     diffs = compare_data(old_data, new_data)
-    save_user_data(vanity_name, new_data)
     return jsonify(diffs)
 
 if __name__ == '__main__':
