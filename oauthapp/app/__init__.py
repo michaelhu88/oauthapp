@@ -5,4 +5,6 @@ load_dotenv()
 
 app = Flask(__name__)
 
+app.config.from_object('config.Config')
+
 from .views import *
