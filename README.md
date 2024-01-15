@@ -1,13 +1,8 @@
-# LinkedIn OAuth Flask Application
+# LinkedIn OAuthApp
 
 ## Overview
-This application demonstrates the usage of LinkedIn's OAuth 2.0 for user authentication in a Flask web application. Users can sign in using their LinkedIn credentials, and the app will retrieve and display the user’s basic profile information.
+A Flask application to authenticate and fetch LinkedIn profile data via OAuth.
 
-## Prerequisites
-- Python (3.6 or newer)
-- Flask
-- requests
-- requests_oauthlib
 
 ## Setup and Installation
 
@@ -15,8 +10,8 @@ This application demonstrates the usage of LinkedIn's OAuth 2.0 for user authent
 Clone this repository to your local machine.
 
 ```shell
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/michaelhu88/oauthapp.git
+cd oauthapp
 ```
 
 ### 2. Set Up Virtual Environment
@@ -26,7 +21,7 @@ For Windows:
 
 ```shell
 python -m venv env
-.\env\Scripts\activate
+env\Scripts\activate
 ```
 
 For Unix or MacOS:
@@ -36,33 +31,39 @@ python -m venv env
 source env/bin/activate
 ```
 
-### 3. Install Required Packages
+### 3. Install Requirements
 
 ```shell
-pip install Flask requests requests_oauthlib
+pip install -r requirements.txt
 ```
 
-### 4. Set Up LinkedIn App
-Create a new application through LinkedIn's Developer portal, and obtain your Client ID and Client Secret. Set your application's redirect URI to http://127.0.0.1:5000/auth/linkedin/callback.
-
-Replace YOUR_LINKEDIN_CLIENT_ID and YOUR_LINKEDIN_CLIENT_SECRET in your Python file with your actual LinkedIn app credentials.
+### 4. Set up your environment variables in a .env file in the root directory, with the following variables:
+```
+EMAIL=your_email@example.com
+PASSWORD=your_password
+```
 
 ### 5. Run the Application
 
 ```shell
-python linkedin_oauth.py
+python run.py
 ```
 
 Open a web browser and access http://127.0.0.1:5000/.
 
 ## Usage
-Users can log in with their LinkedIn credentials. Upon successful authentication, the application will display the user’s first and last name.
+This application provides endpoints to fetch and compare data from LinkedIn. To use these endpoints, a valid LinkedIn account is required for authentication.
+
+- Endpoint 1: `/fetch` (POST): Fetches data from LinkedIn. Requires authentication via a valid LinkedIn account.
+- Endpoint 2: `/compare` (POST): Compares data from LinkedIn. Requires authentication via a valid LinkedIn account.
+
+To authenticate, provide your LinkedIn email and password in the `.env` file as shown in the Setup section.
 
 ## License
 This project is licensed under the terms of the MIT license.
 
 ## Acknowledgements
-Thanks to LinkedIn for providing the OAuth 2.0 authentication mechanism.
+Special thanks to Tom Quirk for the [linkedin-api](https://github.com/tomquirk/linkedin-api) which this project utilizes to interact with LinkedIn.
 
 ## Support
 For support or issues, please submit a GitHub issue or contact the repository owner.
