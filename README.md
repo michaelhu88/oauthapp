@@ -54,7 +54,7 @@ Open a web browser and access http://127.0.0.1:5000/.
 ## Usage
 This application provides endpoints to fetch and compare data from LinkedIn. To use these endpoints, a valid LinkedIn account is required for authentication.
 
-- Endpoint 1: `/fetch` (POST): Fetches data from LinkedIn. Requires authentication via a valid LinkedIn account.
+- Endpoint 1: `/fetch` (POST): Fetches a LinkedIn profile's data and saves into database. Requires authentication via a valid LinkedIn account.
 - Endpoint 2: `/compare` (POST): Compares updated profile data with old profile data that was previously fetched. Requires authentication via a valid LinkedIn account.
 
 To authenticate, provide your LinkedIn email and password in the `.env` file as shown in the Setup section.
