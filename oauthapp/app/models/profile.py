@@ -24,4 +24,4 @@ class Profile(db.Model):
     projects = db.relationship('Projects', backref='profile', lazy=True, cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f'<Profile {self.linkedin_id}>'
+        return f'<Profile {self.username}>'

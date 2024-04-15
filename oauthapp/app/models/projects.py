@@ -11,3 +11,4 @@ class Projects(db.Model):
     description = db.Column(db.String(255))
     title = db.Column(db.String(120))
     url = db.Column(db.String(120))
+    entityUrn = db.Column(db.String(255))

@@ -14,6 +14,7 @@ class Experience(db.Model):
     #serialize
     company = db.Column(Text)
     title = db.Column(db.String(120))
+    entityUrn = db.Column(db.String(255))
     
 
 

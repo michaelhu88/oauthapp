@@ -11,4 +11,5 @@ class Education(db.Model):
     timePeriod = db.Column(Text)
     degreeName = db.Column(db.String(120))
     schoolName = db.Column(db.String(120))
+    entityUrn = db.Column(db.String(255))
 

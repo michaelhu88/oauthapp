@@ -15,6 +15,6 @@ from .models import *
 from .views import *
 
 with app.app_context():
-    db.drop_all()
+    #db.drop_all() uncomment when you want to reset the database
     db.create_all()
 
