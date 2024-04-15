@@ -1,7 +1,7 @@
 # LinkedIn OAuthApp
 
 ## Overview
-A Flask application to authenticate and fetch LinkedIn profile data via OAuth.
+A Flask application to authenticate and fetch LinkedIn profile data via OAuth. Additional functionalities include an endpoint which detects whether changes have been made to a LinkedIn Profile that has been saved in the database previously. 
 
 
 ## Setup and Installation
